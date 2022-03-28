@@ -3,6 +3,8 @@
 #include <time.h>
 #include "matrices.h"
 
+#define N 10
+
 void createMatrix(int ***pMat, int rows, int cols){
 	srand(time(NULL));
 	// Creating the matrix //
@@ -12,7 +14,7 @@ void createMatrix(int ***pMat, int rows, int cols){
 	// Initialing the matrix //
 	for (i = 0; i < rows; i++)
 		for (j = 0; j < cols; j++)
-			*(*(r + i) + j) = rand() % 10;
+			*(*(r + i) + j) = rand() % N;
 	// Redirecting the pointer //
 	*pMat = r;
 }
@@ -33,7 +35,7 @@ void printMat(int **pMat, int rows, int cols){
 	int i, j;
 	for (i = 0; i < rows; i++){
 		for (j = 0; j < cols; j++)
-			printf("%2d",*(*(pMat + i) + j));
+				printf("%2d",*(*(pMat + i) + j));
 		printf("\n");
 	}
 }
@@ -45,5 +47,66 @@ void freeMat(int ***pMat, int rows){
 	}
 	free(*pMat);
 	*pMat = NULL;
-	printf("\nMatrix was freed successfully.\n");
+	printf("\nMatrix was freed successfully!\n");
+}
+int ** createLowerTriangular(int rows, int cols){
+	int i, j, ** Mat = NULL;
+	Mat = (int **)malloc(rows * sizeof(int *));
+	for (i = 0; i < rows && i < cols; i++){
+		*(Mat + i) = (int *)malloc((i+1) * sizeof(int));
+		for (j = 0; j <= i; j++)
+			*(*(Mat + i)+j) = rand() % N;
+	}
+	while (i < rows){
+		*(Mat + i) = (int *)malloc(cols * sizeof(int));
+		for (j = 0; j < cols; j++)
+			*(*(Mat + i)+j) = rand() % N;
+		i++;
+	}
+	return Mat;
+}
+int lowerTriangularCellValue(int ** Mat, int i, int j){
+	// assuming that the input is correct
+	if (i < j)
+		return 0;
+	return *(*(Mat +i)+j);
+}
+void printLowerTriangular(int ** Mat, int rows, int cols){
+	int i, j;
+	for (i = 0; i < rows; i++){
+		for (j = 0; j < cols; j++)
+			printf(" %d", lowerTriangularCellValue(Mat, i, j));
+		printf("\n");
+	}
+}
+int ** createUpperTriangular(int rows, int cols){
+	int i, j, ** Mat = NULL;
+	Mat = (int **)malloc(rows * sizeof(int *));
+	for (i = 0; i < rows && cols; i++){
+		*(Mat + i) = (int *)malloc(cols * sizeof(int));
+		for (j = 0; j < cols; j++)
+			*(*(Mat + i)+j) = rand() % N;
+		cols--;
+	}
+	return Mat;
+}
+int upperTriangularCellValue(int ** Mat, int i, int j){
+	// assuming that the input is correct
+	if (i > j)
+		return 0;
+	return *(*(Mat +i)+j-i);
+}
+void printUpperTriangular(int ** Mat, int rows, int cols){
+	int i, j;
+	for (i = 0; i < rows; i++){
+		for (j = 0; j < cols; j++)
+			printf(" %d", upperTriangularCellValue(Mat, i, j));
+		printf("\n");
+	}
+	while (i < rows){
+		for (j = 0; j < cols; j++)
+			printf(" 0");
+		printf("\n");
+		i++;
+	}
 }
